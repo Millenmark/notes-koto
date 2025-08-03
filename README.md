@@ -1,98 +1,186 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Notes Koto - NestJS Notes Application
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A secure notes application built with NestJS, MongoDB, and Google OAuth authentication.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Google OAuth Authentication**: Users can log in using their Google accounts
+- **JWT Token-based Authorization**: Secure API access with JWT tokens
+- **CRUD Operations**: Create, read, update, and delete notes
+- **User-specific Notes**: Each user can only access their own notes
+- **MongoDB Integration**: Persistent data storage with MongoDB
+- **Input Validation**: Request validation using class-validator
+- **CORS Support**: Cross-origin resource sharing enabled
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## API Endpoints
 
-## Project setup
+### Authentication
 
-```bash
-$ npm install
-```
+- `GET /auth/google` - Initiate Google OAuth login
+- `GET /auth/google/callback` - Google OAuth callback
+- `GET /auth/profile` - Get current user profile (requires JWT)
+- `POST /auth/logout` - Logout user (requires JWT)
 
-## Compile and run the project
+### Notes
 
-```bash
-# development
-$ npm run start
+- `POST /api/notes` - Create a new note (requires JWT)
+- `GET /api/notes` - Get all notes for authenticated user (requires JWT)
+- `GET /api/notes/:id` - Get specific note (requires JWT)
+- `PUT /api/notes/:id` - Update note (requires JWT)
+- `DELETE /api/notes/:id` - Delete note (requires JWT)
 
-# watch mode
-$ npm run start:dev
+## Setup Instructions
 
-# production mode
-$ npm run start:prod
-```
+### Prerequisites
 
-## Run tests
+- Node.js (v16 or higher)
+- MongoDB (local or cloud instance)
+- Google OAuth credentials
+
+### 1. Install Dependencies
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+### 2. Environment Configuration
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Create a `.env` file in the root directory with the following variables:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+# Database
+MONGODB_URI=mongodb://localhost:27017/notes-koto
+
+# Google OAuth (Get from Google Cloud Console)
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+
+# JWT
+JWT_SECRET=your_jwt_secret_here
+JWT_EXPIRES_IN=7d
+
+# Application
+PORT=3000
+NODE_ENV=development
+```
+
+### 3. Google OAuth Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URI: `http://localhost:3000/auth/google/callback`
+6. Copy Client ID and Client Secret to your `.env` file
+
+### 4. MongoDB Setup
+
+- **Local MongoDB**: Install MongoDB locally and ensure it's running on port 27017
+- **MongoDB Atlas**: Create a cluster and update the `MONGODB_URI` in `.env`
+
+### 5. Run the Application
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run build
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The application will be available at `http://localhost:3000`
 
-## Resources
+## Usage
 
-Check out a few resources that may come in handy when working with NestJS:
+### Authentication Flow
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+1. Navigate to `http://localhost:3000/auth/google` to initiate Google login
+2. Complete Google OAuth flow
+3. You'll be redirected with a JWT token
+4. Use the JWT token in the Authorization header for API requests:
+   ```
+   Authorization: Bearer <your_jwt_token>
+   ```
 
-## Support
+### Creating Notes
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+curl -X POST http://localhost:3000/api/notes \
+  -H "Authorization: Bearer <your_jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "My Note", "content": "Note content here"}'
+```
 
-## Stay in touch
+### Getting Notes
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+curl -X GET http://localhost:3000/api/notes \
+  -H "Authorization: Bearer <your_jwt_token>"
+```
 
-## License
+## Security Features
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **JWT Authentication**: All note endpoints require valid JWT tokens
+- **User Isolation**: Users can only access their own notes
+- **Input Validation**: All inputs are validated using class-validator
+- **CORS Protection**: Configured for specific origins
+- **Authorization Checks**: Ownership verification for all note operations
+
+## Project Structure
+
+```
+src/
+├── auth/                 # Authentication module
+│   ├── guards/          # Auth guards (JWT, Google)
+│   ├── strategies/      # Passport strategies
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   └── auth.module.ts
+├── notes/               # Notes module
+│   ├── dto/            # Data transfer objects
+│   ├── notes.controller.ts
+│   ├── notes.service.ts
+│   └── notes.module.ts
+├── schemas/            # MongoDB schemas
+│   ├── user.schema.ts
+│   └── note.schema.ts
+├── app.module.ts       # Main application module
+└── main.ts            # Application entry point
+```
+
+## Development
+
+```bash
+# Run in development mode
+npm run start:dev
+
+# Run tests
+npm run test
+
+# Run e2e tests
+npm run test:e2e
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+```
+
+## Error Handling
+
+The application includes proper error handling for:
+
+- Invalid JWT tokens (401 Unauthorized)
+- Missing notes (404 Not Found)
+- Unauthorized access to notes (403 Forbidden)
+- Validation errors (400 Bad Request)
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
