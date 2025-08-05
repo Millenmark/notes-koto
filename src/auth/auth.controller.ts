@@ -10,18 +10,20 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  async googleAuth(@Req() req: Request) {
-    // This route initiates the Google OAuth flow
-  }
+  async googleAuth(@Req() req: Request) {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
-    const result = await this.authService.login(req.user as any);
-
-    // Redirect to frontend with token
-    const redirectUrl = `http://localhost:3000/auth/success?token=${result.access_token}`;
-    res.redirect(redirectUrl);
+    try {
+      const result = await this.authService.login(req.user as any);
+      // Redirect to frontend with token
+      const redirectUrl = `http://localhost:3000/auth/success?token=${result.access_token}`;
+      res.redirect(redirectUrl);
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      res.redirect('http://localhost:3000/auth/error');
+    }
   }
 
   @Get('profile')
